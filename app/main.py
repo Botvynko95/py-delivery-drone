@@ -11,11 +11,11 @@ class BaseRobot:
             self,
             name: str,
             weight: int,
-            coords: list | None = None,
+            coords: list[int] | None = None,
     ) -> None:
         self.name = name
         self.weight = weight
-        self.coords = [0, 0] if coords is None else coords
+        self.coords = [0, 0] if coords is None else list(coords)
 
     def get_info(self) -> str:
         return f"Robot: {self.name}, Weight: {self.weight}"
@@ -38,12 +38,17 @@ class FlyingRobot(BaseRobot):
             self,
             name: str,
             weight: int,
-            coords: list | None = None,
+            coords: list[int] | None = None,
     ) -> None:
+        if coords is None:
+            coords = [0, 0, 0]
+        elif len(coords) == 2:
+            coords = coords + [0]
+
         super().__init__(
             name=name,
             weight=weight,
-            coords=[0, 0, 0] if coords is None else coords
+            coords=coords
         )
 
     def go_up(self, z_axis: int = 1) -> None:
@@ -60,7 +65,7 @@ class DeliveryDrone(FlyingRobot):
             weight: int,
             max_load_weight: int,
             current_load: Cargo | None = None,
-            coords: list | None = None,
+            coords: list[int] | None = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -73,7 +78,7 @@ class DeliveryDrone(FlyingRobot):
         if current_load is not None:
             self.hook_load(current_load)
 
-    def hook_load(self, cargo: Cargo) -> None:
+    def hook_load(self, cargo: Cargo | None) -> None:
         if cargo is None:
             return
 
